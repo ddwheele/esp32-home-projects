@@ -1,6 +1,10 @@
-This project reads values from two phototransistors and sends the values to the Adafruit IO server. 
+# Two Button Input
 
-It must be run with an ESP32 wired as shown below. PTL stands for Photo Transistor Light http://adafru.it/2831
+The circuit board will have two buttons and two LEDs wired to the ESP. One LED-button pair is for channel 1 and the other LED-button pair is for channel 2.
+
+The ESP sends a low or a high signal for each channel once per second. Both signals start off low, and the LEDs are off. When the button is pressed for a channel that is low, the LED turns on, and a high signal is sent for that channel until the button is pressed again. Then the LED turns off and the low signal is sent again.
+
+This program is meant to be run with the ESP wired as shown below:
 
 ```mermaid
 ---
@@ -9,19 +13,27 @@ title: Circuit diagram
 
 graph LR
 	subgraph ESP32
-	VIN
+	3V3
 	GND
-	D35
-	D34
+	D4
+	D5
+	TBD1
+	TBD2
 	end
-	PWR-->VIN
-	GND-->Ground
-	P1((PTL1))
-	P2((PTL2))
-	R10[[R10K]]
-	R1[[R1K]]
-	D35-->P1-->Ground
-	D35-->R10-->Ground
-	D34-->P2-->Ground
-	D34-->R1-->Ground
+	GND -- Ground
+	B1((Button1))
+	B2((Button2))
+	R1_10K[[R10K]]
+	R1_220[[R220]]
+	R2_10K[[R10K]]
+	R2_220[[R220]]
+	L1((LED1))
+	L2((LED2))
+	3V3 -- B1
+	B1 -- R1_10K -- Ground
+	B1 -- D4
+	D5 -- L1 -- R1_220 -- Ground
+	3V3 -- B2 -- R2_10K -- Ground
+	B2 -- TBD1
+	TBD2 -- L2 -- R2_220 -- Ground
 ```
