@@ -2,7 +2,6 @@
  * Code that reads values from two phototransistors and serves a 
  * webpage with the latest values.
  * 
- * 
  * Based on tutorial code for the LAFVIN ESP32 Basic Starter Kit
  * Project 9 ESP32 DHT11 Web Server.
  */
