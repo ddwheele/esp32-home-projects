@@ -20,7 +20,7 @@ graph LR
 	TBD1
 	TBD2
 	end
-	GND -- Ground
+	GND --- Ground
 	B1((Button1))
 	B2((Button2))
 	R1_10K[[R10K]]
@@ -29,11 +29,11 @@ graph LR
 	R2_220[[R220]]
 	L1((LED1))
 	L2((LED2))
-	3V3 -- B1
-	B1 -- R1_10K -- Ground
-	B1 -- D4
-	D5 -- L1 -- R1_220 -- Ground
-	3V3 -- B2 -- R2_10K -- Ground
-	B2 -- TBD1
-	TBD2 -- L2 -- R2_220 -- Ground
+	3V3 --- B1
+	B1 --- R1_10K --- Ground
+	B1 --- D4
+	D5 --- L1 --- R1_220 --- Ground
+	3V3 --- B2 --- R2_10K --- Ground
+	B2 --- TBD1
+	TBD2 --- L2 --- R2_220 --- Ground
 ```
