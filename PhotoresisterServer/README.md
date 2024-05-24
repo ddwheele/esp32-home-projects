@@ -16,8 +16,10 @@ graph LR
 	GND-->Ground
 	P1((Photoresistor1))
 	P2((Photoresistor2))
+	R10[[R10K]]
+	R1[[R1K]]
 	D35-->P1-->Ground
-	D35-->[[R10K]]-->Ground
+	D35-->R10-->Ground
 	D34-->P2-->Ground
-	D34-->[[R1K]]-->Ground
+	D34-->R1-->Ground
 ```
