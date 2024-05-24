@@ -15,12 +15,11 @@
  * Example code demonstrated sending a value to the Adafruit IO Server.
  * I modified it to send the values from two phototransistors.
  */
-
-// passwords.h must define:
+ 
+// passwords.hpp must define:
 // WIFI_SSID and WIFI_PASS - wifi name and password
 // IO_USERNAME and IO_KEY - adafruit IO key
 #include "passwords.hpp"
-
 
 // comment out the following lines if you are using fona or ethernet
 #include "AdafruitIO_WiFi.h"
@@ -66,7 +65,6 @@ int readValue1K() {
 }
 
 void setup() {
-
   pinMode(pin10K, INPUT);
   pinMode(pin1K, INPUT);
 
