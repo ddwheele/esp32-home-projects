@@ -14,8 +14,10 @@ graph LR
 	end
 	PWR-->VIN
 	GND-->Ground
-	D35-->((Photoresistor1))-->Ground
+	P1((Photoresistor1))
+	P2((Photoresistor2))
+	D35-->P1-->Ground
 	D35-->[[R10K]]-->Ground
-	D34-->((Photoresistor2))-->Ground
+	D34-->P2-->Ground
 	D34-->[[R1K]]-->Ground
 ```
