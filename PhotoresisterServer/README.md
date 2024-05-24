@@ -1,4 +1,6 @@
-This project is meant to be run with an ESP32 in this circuit.
+This project is meant to be run with an ESP32 wired like this.
+
+PTL stands for Photo Transistor Light http://adafru.it/2831
 
 ```mermaid
 ---
@@ -14,8 +16,8 @@ graph LR
 	end
 	PWR-->VIN
 	GND-->Ground
-	P1((Photoresistor1))
-	P2((Photoresistor2))
+	P1((PTL1))
+	P2((PTL2))
 	R10[[R10K]]
 	R1[[R1K]]
 	D35-->P1-->Ground
