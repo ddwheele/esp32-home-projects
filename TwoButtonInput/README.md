@@ -11,7 +11,6 @@ title: Block Circuit Diagram
 ---
 block-beta
 block:ESP32
-	columns 1
 	VIN
 	GND
 	D26
@@ -21,18 +20,26 @@ block:ESP32
 end
 
 block:LED1
+	columns 2
+	LED1:2
 	L1plus["+"] L1minus["-"]
 end
 
 block:LED2
+columns 2
+	LED2:2
 	L2plus["+"] L2minus["-"]
 end
 
 block:Button1
+columns 2
+	Button1:2
 	B1plus["+"] B1minus["-"]
 end
 
 block:Button2
+columns 2
+	Button2:2
 	B2plus["+"] B2minus["-"]
 end
 
