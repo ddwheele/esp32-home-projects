@@ -11,13 +11,44 @@
  * turns off and the low signal is sent again.
  */
 
+#include "passwords.hpp"
+
+const int button1 = 25;
+const int led1    = 26;
+
+const int button2 = 32;
+const int led2    = 33;
+
+int buttonState1 = 0;
+int buttonState2 = 0;
 
 void setup() {
-  // put your setup code here, to run once:
+  Serial.begin(115200);
 
+  pinMode(button1, INPUT);
+  pinMode(button2, INPUT);
+
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  buttonState1 = digitalRead(button1);
+  buttonState2 = digitalRead(button2);
+  
+  Serial.print("1: ");   Serial.println(buttonState1);
+ // Serial.print("2: ");  Serial.println(buttonState2);
 
+// turn the corresponding LED on when the button is pressed
+  if(buttonState1 == HIGH) {
+    digitalWrite(led1, HIGH);
+  } else {
+    digitalWrite(led1, LOW);
+  }
+
+  if(buttonState2 == HIGH) {
+    digitalWrite(led2, HIGH);
+  } else {
+    digitalWrite(led2, LOW);
+  }
 }
