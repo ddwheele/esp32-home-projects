@@ -13,12 +13,12 @@ title: Circuit diagram
 
 graph LR
 	subgraph ESP32
-	3V3
+	VIN
 	GND
-	D4
-	D5
-	TBD1
-	TBD2
+	D25
+	D26
+	D32
+	D33
 	end
 	GND --- Ground
 	B1((Button1))
@@ -29,11 +29,11 @@ graph LR
 	R2_220[[R220]]
 	L1((LED1))
 	L2((LED2))
-	3V3 --- B1
+	VIN --- B1
 	B1 --- R1_10K --- Ground
-	B1 --- D4
-	D5 --- L1 --- R1_220 --- Ground
+	B1 --- D25
+	D26 --- L1 --- R1_220 --- Ground
 	3V3 --- B2 --- R2_10K --- Ground
-	B2 --- TBD1
-	TBD2 --- L2 --- R2_220 --- Ground
+	B2 --- D32
+	D33 --- L2 --- R2_220 --- Ground
 ```
