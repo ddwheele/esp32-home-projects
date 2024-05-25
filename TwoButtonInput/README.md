@@ -10,6 +10,7 @@ This program is meant to be run with the ESP wired as shown below:
 title: Block Circuit Diagram
 ---
 block-beta
+columns 2
 block:ESP32
 	VIN
 	GND
