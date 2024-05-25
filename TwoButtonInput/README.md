@@ -43,16 +43,20 @@ R2_220[["R220"]]
 
 
 VIN --- B1plus
-B1minus --- R1_10K --- Ground
+B1minus --- R1_10K 
+R1_10K --- Ground
 B1minus --- D25
 D26 --- L1plus
-L1minus --- R1_220 --- Ground
+L1minus --- R1_220
+R1_220 --- Ground
 
 VIN --- B2plus
-B2minus --- R2_10K --- Ground
+B2minus --- R2_10K
+R2_10K --- Ground
 B2minus --- D32
 D33 --- L2plus
-L2minus --- R2_220 --- Ground
+L2minus --- R2_220
+R2_220 --- Ground
 
 ```
 
