@@ -25,21 +25,28 @@
 	\draw (C.bpin 30) -- ++(1,0) node[vcc]{};
 	\draw (C.bpin 29) -- ++(10,0) -- ++ (0,-15) node[ground]{};
 	
-	\draw (C.bpin 24)  to[leDo, color=red] ++(1,0) 
-		   to [R=\SI{220}{\ohm}]   ++(2,0)
-		  to[short, -*]  ++(7,0);
-		 
+% draw the button circuits
+	\draw (C.bpin 30)  -- ++(1,0) -- ++(0,-3)
+		 to [nopb,l=push, color=red] ++( 2,-0) 
+		 to[short]    (C.bpin 23) ;
+
 	\draw (C.bpin 23) -- ++(3,0) to [nopb,l=push, color=red] 
 		    ++(2,0) to [R=\SI{10}{k\ohm}]
 		 ++(3,0) node[ground]{};
-		 
-	\draw (C.bpin 22)  to[leDo, color=green] ++(5,0) 
-		   to [R=\SI{220}{\ohm}]   ++(2,0)
-		  to[short, -*]  ++(3,0);
-		 
+
 	\draw (C.bpin 21) -- ++(3,0) to [nopb,l=push, color=green] 
 		    ++(2,0) to [R=\SI{10}{k\ohm}]
 		 ++(3,0) node[ground]{};
+
+% draw the LED circuits
+	\draw (C.bpin 24)  to[leDo, color=red] ++(8,0) 
+		   to [R=\SI{220}{\ohm}]   ++(1,0)
+		  to[short, -*]  ++(1,0);
+		 
+	\draw (C.bpin 22)  to[leDo, color=green] ++(8,0) 
+		   to [R=\SI{220}{\ohm}]   ++(1,0)
+		  to[short, -*]  ++(1,0);
+
 \end{circuitikz}
 
 
