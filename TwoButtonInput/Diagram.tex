@@ -7,8 +7,7 @@
 \begin{circuitikz}
 	\ctikzset{multipoles/thickness=3}
 	\ctikzset{multipoles/dipchip/width=2}
-	\ctikzset{multipoles/external pins thickness=2}
-	\draw (0,0) node[dipchip,  external pad fraction=4,
+	\draw (0,0) node[dipchip, external pins width=0.0,
 		num pins=30, hide numbers](C){ESP32};
 	\node [left, font=\tiny] at (C.bpin 30) {VIN};
 	\node [left, font=\tiny] at (C.bpin 29) {GND};
@@ -23,23 +22,26 @@
 	\node [left, font=\tiny] at (C.bpin 10) {...};
 		
 	\draw (C.bpin 30) -- ++(3,0) node[vcc]{};
-	\draw (C.bpin 29) -- ++(3,0) node[ground]{};	
-	\draw (C.bpin 24) -- ++(1,0) to [leDo,l=LED1] 
+	\draw (C.bpin 29) -- ++(10,0) node[ground]{};
+	
+	\draw (C.bpin 24) -- ++(1,0) to [leDo, color=red] 
 		    ++(2,0) to [R=\SI{220}{\ohm}]
-		 ++(2,0) node[ground]{};
+		 ++(7,0) node[ground]{};
 		 
-	%\draw (C.bpin 33) -- ++(1,0) to [leDo,l=LED1] 
-%		    ++(2,0) to [R=\SI{220}{\ohm}]
-%		 ++(2,0) node[ground]{};
+	\draw (C.bpin 23) -- ++(3,0) to [nopb,l=push, color=red] 
+		    ++(2,0) to [R=\SI{10}{k\ohm}]
+		 ++(3,0) node[ground]{};
+
+	\draw (C.bpin 22) -- ++(5,0) to [leDo, color=green] 
+		    ++(2,0) to [R=\SI{220}{\ohm}]
+		 ++(3,0) node[ground]{};
+		 
+	\draw (C.bpin 21) -- ++(3,0) to [nopb,l=push, color=green] 
+		    ++(2,0) to [R=\SI{10}{k\ohm}]
+		 ++(3,0) node[ground]{};
 \end{circuitikz}
 
-\begin{circuitikz}
-   \draw (0,0) to [battery,l=\SI{-5}{V}] (0,0)
 
-             to [R=\SI{510}{\ohm}] (0,5)
-
-               to [battery,l=\SI{5}{V}] (0,5);               
-    \end{circuitikz}
 
 	
 \begin{circuitikz}
