@@ -27,18 +27,18 @@
 	
 % draw the button circuits
 	\draw (C.bpin 30)  -- ++(1,0) -- ++(0,-3)
-		 to [nopb, color=red] ++( 2,-0) 
-		 to [R=\SI{10}{k\ohm}]   ++(6,0)
-		 to[short, -*]  ++(1,0);
+		 to [nopb, color=red] 	++( 2,-0) 
+ 		to[short]  ++(0,-5)
+		 to[short,-*]  (C.bpin 23);
 		  
 	\draw (C.bpin 30)  -- ++(1,0) -- ++(0,-5)
 		 to [nopb,color=green] ++( 2,-0) 
-		   to [R=\SI{10}{k\ohm}]   ++(6,0)
+		  to [R=\SI{10}{k\ohm}]   ++(6,0)
 		  to[short, -*]  ++(1,0);
 
-	\draw (C.bpin 23) -- ++(3,0)
-		 -- ++(0,3)
-		  to[short, -*]  ++(0,2);
+	%\draw (C.bpin 23) -- ++(3,0)
+	%	 -- ++(0,3)
+%		  to[short, -*]  ++(0,2);
 
 	\draw (C.bpin 21) -- ++(3,0) to [nopb,color=green] 
 		    ++(2,0) to [R=\SI{10}{k\ohm}]
