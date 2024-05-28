@@ -7,53 +7,40 @@
 \begin{circuitikz}
 	\ctikzset{multipoles/thickness=3}
 	\ctikzset{multipoles/dipchip/width=2}
-	\draw (0,0) node[dipchip, external pins width=0.0,
+	\clip(0,-10) rectangle (15,10);
+	\draw (0,0) node[dipchip, scale=2, external pins width=0.0,
 		num pins=30, hide numbers](C){ESP32};
-	\node [left, font=\tiny] at (C.bpin 30) {VIN};
-	\node [left, font=\tiny] at (C.bpin 29) {GND};
-	\node [left, font=\tiny] at (C.bpin 28) {...};
-	\node [left, font=\tiny] at (C.bpin 27) {...};
-	\node [left, font=\tiny] at (C.bpin 26) {...};
-	\node [left, font=\tiny] at (C.bpin 25) {...};
-	\node [left, font=\tiny] at (C.bpin 24) {D26};
-	\node [left, font=\tiny] at (C.bpin 23) {D25};
-	\node [left, font=\tiny] at (C.bpin 22) {D33};
-	\node [left, font=\tiny] at (C.bpin 21) {D32};
-	\node [left, font=\tiny] at (C.bpin 10) {...};
+	\node [left] at (C.bpin 30) {VIN};
+	\node [left] at (C.bpin 29) {GND};
+	\node [left] at (C.bpin 28) {...};
+	\node [left] at (C.bpin 27) {...};
+	\node [left] at (C.bpin 26) {...};
+	\node [left] at (C.bpin 25) {...};
+	\node [left] at (C.bpin 24) {D26};
+	\node [left] at (C.bpin 23) {D25};
+	\node [left] at (C.bpin 22) {D33};
+	\node [left] at (C.bpin 21) {D32};
+	\node [left] at (C.bpin 10) {...};
 		
-	\draw (C.bpin 30) -- ++(3,0) node[vcc]{};
-	\draw (C.bpin 29) -- ++(10,0) node[ground]{};
+	\draw (C.bpin 30) -- ++(1,0) node[vcc]{};
+	\draw (C.bpin 29) -- ++(10,0) -- ++ (0,-15) node[ground]{};
 	
-	\draw (C.bpin 24) -- ++(1,0) to [leDo, color=red] 
-		    ++(2,0) to [R=\SI{220}{\ohm}]
-		 ++(7,0) node[ground]{};
+	\draw (C.bpin 24)  to[leDo, color=red] ++(1,0) 
+		   to [R=\SI{220}{\ohm}]   ++(2,0)
+		  to[short, -*]  ++(7,0);
 		 
 	\draw (C.bpin 23) -- ++(3,0) to [nopb,l=push, color=red] 
 		    ++(2,0) to [R=\SI{10}{k\ohm}]
 		 ++(3,0) node[ground]{};
-
-	\draw (C.bpin 22) -- ++(5,0) to [leDo, color=green] 
-		    ++(2,0) to [R=\SI{220}{\ohm}]
-		 ++(3,0) node[ground]{};
+		 
+	\draw (C.bpin 22)  to[leDo, color=green] ++(5,0) 
+		   to [R=\SI{220}{\ohm}]   ++(2,0)
+		  to[short, -*]  ++(3,0);
 		 
 	\draw (C.bpin 21) -- ++(3,0) to [nopb,l=push, color=green] 
 		    ++(2,0) to [R=\SI{10}{k\ohm}]
 		 ++(3,0) node[ground]{};
 \end{circuitikz}
-
-
-
-	
-\begin{circuitikz}
-\draw (0,0) to[battery] (0,4)
-  to[ammeter, i_=2<\milli\ampere>] (4,4)
-  to[C=3<\farad>] (4,0) -- (3.5,0)
-  to[lamp, *-*] (0.5,0) -- (0,0)
-(0.5,0) -- (0.5,-2)
-  to[voltmeter, l=3<\kilo\volt>, color=red] (3.5,-2) -- (3.5,0)
-;
-\end{circuitikz}
-
 
 
 \end{document}
