@@ -13,6 +13,25 @@
 
 #include "passwords.hpp"
 
+#include "AdafruitIO_WiFi.h"
+
+#if defined(USE_AIRLIFT) || defined(ADAFRUIT_METRO_M4_AIRLIFT_LITE) ||         \
+    defined(ADAFRUIT_PYPORTAL)
+// Configure the pins used for the ESP32 connection
+#if !defined(SPIWIFI_SS) // if the wifi definition isnt in the board variant
+// Don't change the names of these #define's! they match the variant ones
+#define SPIWIFI SPI
+#define SPIWIFI_SS 10  // Chip select pin
+#define SPIWIFI_ACK 9  // a.k.a BUSY or READY pin
+#define ESP32_RESETN 6 // Reset pin
+#define ESP32_GPIO0 -1 // Not connected
+#endif
+AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASS, SPIWIFI_SS,
+                   SPIWIFI_ACK, ESP32_RESETN, ESP32_GPIO0, &SPIWIFI);
+#else
+AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASS);
+#endif
+
 const int BUTTON_1_PIN = 25;
 const int LED_1_PIN    = 26;
 
@@ -47,28 +66,78 @@ int selected2 = 0;
 
 unsigned long currentMillis;
 
-void setup() {
-  Serial.begin(115200);
+AdafruitIO_Feed *noise_feed = io.feed("noise");
+AdafruitIO_Feed *home_feed = io.feed("home");
 
+void setup() {
   pinMode(BUTTON_1_PIN, INPUT);
   pinMode(BUTTON_2_PIN, INPUT);
 
   pinMode(LED_1_PIN, OUTPUT);
   pinMode(LED_2_PIN, OUTPUT);
+
+  // start the serial connection
+  Serial.begin(115200);
+
+  // wait for serial monitor to open
+  while(! Serial);
+
+  Serial.print("Connecting to Adafruit IO");
+
+  // connect to io.adafruit.com
+  io.connect();
+
+  // wait for a connection
+  while(io.status() < AIO_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+
+  // we are connected
+  Serial.println();
+  Serial.println(io.statusText());
 }
+
+void lightLedsIfSelected() {
+  if(selected1) {
+     digitalWrite(LED_1_PIN, HIGH);
+  } else {
+     digitalWrite(LED_1_PIN, LOW);
+  }
+  if(selected2) {
+     digitalWrite(LED_2_PIN, HIGH);
+  } else {
+     digitalWrite(LED_2_PIN, LOW);
+  }
+}
+
+int isButton1Dead() {
+  if(dead1) {
+    currentMillis = millis();
+    if((currentMillis - changedTime1) > DEAD_THRESHOLD) {
+      dead1=false;
+    }
+  }
+  return dead1;
+}
+
+int isButton2Dead() {
+  if(dead2) {
+    currentMillis = millis();
+    if((currentMillis - changedTime2) > DEAD_THRESHOLD) {
+      dead2=false;
+    }
+  }
+   return dead2;
+}
+
 
 void loop() {
   buttonState1 = digitalRead(BUTTON_1_PIN);
   buttonState2 = digitalRead(BUTTON_2_PIN);
 
 // don't count if button was just pressed
-if(dead1) {
-  currentMillis = millis();
-  if((currentMillis - changedTime1) > DEAD_THRESHOLD) {
-     Serial.println("1 is alive");
-    dead1=false;
-  }
-} else {
+if(!isButton1Dead()) {
   // track time the button is pressed
   if(buttonState1 == HIGH) {
     count1++;
@@ -77,13 +146,7 @@ if(dead1) {
   }
 }
 
-if(dead2) {
-    currentMillis = millis();
-  if((currentMillis - changedTime2) > DEAD_THRESHOLD) {
-    Serial.println("2 is alive");
-    dead2=false;
-  }
-} else {
+if(!isButton2Dead()){
   if(buttonState2 == HIGH) {
     count2++;
   } else {
@@ -101,7 +164,6 @@ if(dead2) {
     dead1 = true;
     changedTime1 = millis();
     count1 = 0;
-        Serial.println("1====================================");
   }
   if(count2 > PUSH_THRESHOLD) {
     if(selected2 == false) {
@@ -112,24 +174,8 @@ if(dead2) {
     dead2 = true;
     changedTime2 = millis();
     count2 = 0;
-    Serial.println("2====================================");
   }
 
-// if selected, light the LED
-  if(selected1) {
-     digitalWrite(LED_1_PIN, HIGH);
-  } else {
-     digitalWrite(LED_1_PIN, LOW);
-  }
-  if(selected2) {
-     digitalWrite(LED_2_PIN, HIGH);
-  } else {
-     digitalWrite(LED_2_PIN, LOW);
-  }
-
-
-//if(count2 > 0) {
-  // Serial.print("2: "); Serial.print(count2);Serial.print(", ");Serial.println(selected2);
-//}
+  lightLedsIfSelected();
 
 }
