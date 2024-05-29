@@ -42,7 +42,7 @@ const int LED_2_PIN    = 33;
 const int PUSH_THRESHOLD = 80;
 
 // After a selection change, stop listening for this long 
-unsigned long DEAD_THRESHOLD = 500UL;
+unsigned long WAITING_THRESHOLD = 500UL;
 
 // if button 1 or 2 is pressed
 int buttonState1 = false;
@@ -55,13 +55,13 @@ unsigned long pressedTime2 = 0UL;
 int pressed1 = false;
 int pressed2 = false;
 
-// time of selection change, used to count "dead time"
+// time of selection change, used to count "waiting time"
 unsigned long changedTime1 = 0UL;
 unsigned long changedTime2 = 0UL;
 
-// is this button counting "dead time"
-int dead1 = false;
-int dead2 = false;
+// is this button counting "waiting time"
+int waiting1 = false;
+int waiting2 = false;
 
 // if channel 1 or 2 has been "selected" (by pushing the button for it)
 int selected1 = false;
@@ -114,33 +114,28 @@ void lightLedsIfSelected() {
   }
 }
 
-int isButton1Dead() {
-  if(dead1) {
+int isButton1Waiting() {
+  if(waiting1) {
     currentMillis = millis();
-    if((currentMillis - changedTime1) > DEAD_THRESHOLD) {
-      dead1=false;
+    if((currentMillis - changedTime1) > WAITING_THRESHOLD) {
+      waiting1=false;
     }
   }
-  return dead1;
+  return waiting1;
 }
 
-int isButton2Dead() {
-  if(dead2) {
+int isButton2Waiting() {
+  if(waiting2) {
     currentMillis = millis();
-    if((currentMillis - changedTime2) > DEAD_THRESHOLD) {
-      dead2=false;
+    if((currentMillis - changedTime2) > WAITING_THRESHOLD) {
+      waiting2=false;
     }
   }
-   return dead2;
+   return waiting2;
 }
 
-
-void loop() {
-  buttonState1 = digitalRead(BUTTON_1_PIN);
-  buttonState2 = digitalRead(BUTTON_2_PIN);
-
-  // don't count if button was just pressed
-  if(!isButton1Dead()) {
+int isButton1Pressed() {
+  if(!isButton1Waiting()) {
     // track time the button is pressed
     if(buttonState1 == HIGH) {
       if(pressed1 == false) {
@@ -151,8 +146,11 @@ void loop() {
       pressed1 = false;
     }
   }
-  
-  if(!isButton2Dead()){
+  return pressed1;
+}
+
+int isButton2Pressed() {
+   if(!isButton2Waiting()){
     if(buttonState2 == HIGH) {
       if(pressed2 == false) {
         pressedTime2 = millis();
@@ -162,9 +160,12 @@ void loop() {
       pressed2 = false;
     }
   }
+  return pressed2;
+}
 
+void updateSelection1() {
   // if button pressed long enough, toggle selected state
-  if(pressed1) {
+  if(isButton1Pressed()) {
     currentMillis = millis();
     if((currentMillis - pressedTime1) > PUSH_THRESHOLD) {
       if(selected1 == false) {
@@ -172,25 +173,36 @@ void loop() {
       } else if(selected1 == true) {
         selected1 = false;
       }
-      dead1 = true;
+      waiting1 = true;
       changedTime1 = millis();
       pressed1 = false;
     }
   }
-    
-    if(pressed2) {
-      currentMillis = millis();
-      if((currentMillis - pressedTime2) > PUSH_THRESHOLD) {
-        if(selected2 == false) {
-          selected2 = true;
-        } else if(selected2 == true) {
-          selected2 = false;
-        }
-        dead2 = true;
-        changedTime2 = millis();
-        pressed2 = false;
+}
+
+void updateSelection2() {
+   if(isButton2Pressed()) {
+    currentMillis = millis();
+    if((currentMillis - pressedTime2) > PUSH_THRESHOLD) {
+      if(selected2 == false) {
+        selected2 = true;
+      } else if(selected2 == true) {
+        selected2 = false;
       }
+      waiting2 = true;
+      changedTime2 = millis();
+      pressed2 = false;
     }
-  
+  }
+}
+
+void loop() {
+  buttonState1 = digitalRead(BUTTON_1_PIN);
+  buttonState2 = digitalRead(BUTTON_2_PIN);
+
+  updateSelection1();
+
+  updateSelection2();
+ 
   lightLedsIfSelected();
 }
