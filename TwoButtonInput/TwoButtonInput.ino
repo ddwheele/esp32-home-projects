@@ -19,7 +19,7 @@ const  int LED_1_PIN    = 26;
 const  int BUTTON_2_PIN = 32;
 const  int LED_2_PIN    = 33;
 
-const  int PUSH_THRESHOLD = 100;
+const  int PUSH_THRESHOLD = 200;
 
 // if button 1 or 2 is pressed
 int buttonState1 = 0;
@@ -57,7 +57,13 @@ void loop() {
 
 // if button pressed long enough, toggle selected state
   if(count1 > PUSH_THRESHOLD) {
-    selected1 = (selected1++)%2;
+    if(selected1 == 0) {
+      selected1 = 1;
+    } else if(selected1 == 1) {
+      selected1 = 0;
+    }
+    count1 = 0;
+    Serial.print("====================================");
   }
 
 // if selected, light the LED
@@ -67,7 +73,9 @@ void loop() {
      digitalWrite(LED_1_PIN, LOW);
   }
 
-   Serial.print("1: ");   Serial.println(count1);
+if(count1 > 0) {
+   Serial.print("1: "); Serial.print(count1);Serial.print(", ");Serial.println(selected1);
+}
 
   if(buttonState2 == HIGH) {
     digitalWrite(LED_2_PIN, HIGH);
