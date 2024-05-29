@@ -8,7 +8,7 @@
 	[pin/.style={rectangle, draw, inner sep=0pt, minimum height=0.5cm, minimum width=1cm}]
 
 	%\clip(0,-10) rectangle (15,10);
-	\draw[step=1cm,gray,very thin] (0,-10) grid (20,10);
+	\draw[step=1cm,gray,ultra thin] (0,-10) grid (20,10);
 	\draw (0,0) circle [radius=10pt];
 		
 	% Body of the chip
@@ -21,16 +21,18 @@
 	\node (D33) at (2,-1) [pin] {D33} +(1,.5) ;
 	\node (D32) at (2,-2) [pin] {D32} +(1,.5) ;
 			
-%	\draw (C.bpin 30) -- ++(1,0) node[vcc]{};
-%	\draw (C.bpin 29) -- ++(10,0) -- ++ (0,-15) node[ground]{};
+	\draw (VIN.east) -- ++(1,0) node[vcc]{};
+	\draw (GND.east) -- ++(12,0) -- ++ (0,-15) node(GROUND)[ground]{};
 	
 % draw the button circuits
-%	\draw (C.bpin 30)  -- ++(1,0) -- ++(0,-3)
-%		 to [nopb, color=red] 	++( 2,-0) 
- %		to[short]  ++(0,-5)
-%		 to[short,-*]  (C.bpin 23);
-%		  
-%	\draw (C.bpin 30)  -- ++(1,0) -- ++(0,-5)
+	\draw (VIN.east)  to[short,-*] ++(1,0)
+		to[normally open push button, draw, color=red] ++(0,-7)
+		to[short]  (D25.east);
+	  
+	 \draw (3.5,2)  to[R=10<\kilo \ohm>,*-*] +(11,0);
+	  
+	  
+%	\draw (VIN)  -- ++(1,0) -- ++(0,-5)
 %		 to [nopb,color=green] ++( 2,-0) 
 %		  to [R=\SI{10}{k\ohm}]   ++(6,0)
 %		  to[short, -*]  ++(1,0);
