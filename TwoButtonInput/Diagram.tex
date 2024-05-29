@@ -7,9 +7,9 @@
 \begin{circuitikz}
 	[pin/.style={rectangle, draw, inner sep=0pt, minimum height=0.5cm, minimum width=1cm}]
 
-	%\clip(0,-10) rectangle (15,10);
-	\draw[step=1cm,gray,ultra thin] (0,-10) grid (20,10);
-	\draw (0,0) circle [radius=10pt];
+	\clip(0,-10) rectangle (15,10);
+	%\draw[step=1cm,gray,ultra thin] (0,-10) grid (20,10);
+	%\draw (0,0) circle [radius=10pt];
 		
 	% Body of the chip
 	\draw(0,-8) rectangle (2.5,8);
@@ -21,38 +21,29 @@
 	\node (D33) at (2,-1) [pin] {D33} +(1,.5) ;
 	\node (D32) at (2,-2) [pin] {D32} +(1,.5) ;
 			
-	\draw (VIN.east) -- ++(1,0) node[vcc]{};
-	\draw (GND.east) -- ++(12,0) -- ++ (0,-15) node(GROUND)[ground]{};
+	\draw (GND.east) -- ++(10,0) -- ++ (0,-10) node(GROUND)[ground]{};
 	
 % draw the button circuits
 	\draw (VIN.east)  to[short,-*] ++(1,0)
-		to[normally open push button, draw, color=red] ++(0,-7)
-		to[short]  (D25.east);
+		to[normally open push button, draw, color=red] ++(0,-6)
+		to[short]  +(0, -1)
+		to[short]  (D25.east);  
+	 \draw (3.5,0)  to[R=10<\kilo \ohm>,*-*] +(9,0); 
 	  
-	 \draw (3.5,2)  to[R=10<\kilo \ohm>,*-*] +(11,0);
-	  
-	  
-%	\draw (VIN)  -- ++(1,0) -- ++(0,-5)
-%		 to [nopb,color=green] ++( 2,-0) 
-%		  to [R=\SI{10}{k\ohm}]   ++(6,0)
-%		  to[short, -*]  ++(1,0);
-
-	%\draw (C.bpin 23) -- ++(3,0)
-	%	 -- ++(0,3)
-%		  to[short, -*]  ++(0,2);
-
-%	\draw (C.bpin 21) -- ++(3,0) to [nopb,color=green] 
-%		    ++(2,0) to [R=\SI{10}{k\ohm}]
-%		 ++(3,0) node[ground]{};
+	\draw (VIN.east)  to[short] ++(2,0)
+		to[normally open push button, draw, color=green] ++(0,-6)
+		to[short]  +(0, -3)
+		to[short]  (D32.east);  
+	 \draw (4.5,-2)  to[R=10<\kilo \ohm>,*-*] +(8,0); 
 
 % draw the LED circuits
-%	\draw (C.bpin 24)  to[leDo, color=red] ++(8,0) 
-%		   to [R=\SI{220}{\ohm}]   ++(1,0)
-%		  to[short, -*]  ++(1,0);
+	\draw (D26.east)  to[leDo, color=red] ++(8,0) 
+		   to [R=\SI{220}{\ohm}]   ++(1,0)
+		   	  to[short, -*]  ++(1,0);
 		 
-%	\draw (C.bpin 22)  to[leDo, color=green] ++(8,0) 
-%		   to [R=\SI{220}{\ohm}]   ++(1,0)
-%		  to[short, -*]  ++(1,0);
+	\draw (D33.east)  to[leDo, color=green] ++(8,0) 
+		   to [R=\SI{220}{\ohm}]   ++(1,0)
+		  to[short, -*]  ++(1,0);
 
 \end{circuitikz}
 
