@@ -5,25 +5,23 @@
 \begin{document}
 
 \begin{circuitikz}
-	\ctikzset{multipoles/thickness=3}
-	\ctikzset{multipoles/dipchip/width=2}
-	\clip(0,-10) rectangle (15,10);
+	[pin/.style={rectangle, draw, inner sep=0pt, minimum height=0.5cm, minimum width=1cm}]
+
+	%\clip(0,-10) rectangle (15,10);
 	\draw[step=1cm,gray,very thin] (0,-10) grid (20,10);
 	\draw (0,0) circle [radius=10pt];
-	
+		
 	% Body of the chip
-	\draw(0,-8.5) rectangle (3,8.5);
+	\draw(0,-8) rectangle (2.5,8);
 	% Pins
-	\draw (2,7.5) rectangle node{VIN} +(1,.5) ;
-	\draw (2,6.5) rectangle node{GND} +(1,.5) ;
-	\draw (2,1) rectangle node{D26} +(1,.5) ;
-	\draw (2,-.25) rectangle node{D25} +(1,.5) ;
-	\draw (2,-1.5) rectangle node{D33} +(1,.5) ;
-	\draw (2,-2.5) rectangle node{D32} +(1,.5) ;
-	
-	
+	\node (VIN) at (2,7) [pin] {VIN}  ;
+	\node (GND) at (2,6) [pin]{GND} +(1,.5) ;
+	\node (D26) at (2,1) [pin] {D26} +(1,.5) ;
+	\node (D25) at (2,0) [pin] {D25} +(1,.5) ;
+	\node (D33) at (2,-1) [pin] {D33} +(1,.5) ;
+	\node (D32) at (2,-2) [pin] {D32} +(1,.5) ;
 			
-	\draw (C.bpin 30) -- ++(1,0) node[vcc]{};
+%	\draw (C.bpin 30) -- ++(1,0) node[vcc]{};
 %	\draw (C.bpin 29) -- ++(10,0) -- ++ (0,-15) node[ground]{};
 	
 % draw the button circuits
