@@ -13,13 +13,17 @@
 
 #include "passwords.hpp"
 
-const  int BUTTON_1_PIN = 25;
-const  int LED_1_PIN    = 26;
+const int BUTTON_1_PIN = 25;
+const int LED_1_PIN    = 26;
 
-const  int BUTTON_2_PIN = 32;
-const  int LED_2_PIN    = 33;
+const int BUTTON_2_PIN = 32;
+const int LED_2_PIN    = 33;
 
-const  int PUSH_THRESHOLD = 200;
+// Push must be this long to trigger selection change
+const int PUSH_THRESHOLD = 80;
+
+// After a selection change, stop listening for this long 
+unsigned long DEAD_THRESHOLD = 500UL;
 
 // if button 1 or 2 is pressed
 int buttonState1 = 0;
@@ -29,10 +33,19 @@ int buttonState2 = 0;
 int count1 = 0;
 int count2 = 0;
 
+// time selection was changed, used to count "dead time"
+unsigned long changedTime1 = 0UL;
+unsigned long changedTime2 = 0UL;
+
+// is this button counting "dead time"
+int dead1 = 0;
+int dead2 = 0;
+
 // if channel 1 or 2 has been "selected" (by pushing the button for it)
 int selected1 = 0;
 int selected2 = 0;
 
+unsigned long currentMillis;
 
 void setup() {
   Serial.begin(115200);
@@ -48,22 +61,58 @@ void loop() {
   buttonState1 = digitalRead(BUTTON_1_PIN);
   buttonState2 = digitalRead(BUTTON_2_PIN);
 
-// track time the button is pressed
+// don't count if button was just pressed
+if(dead1) {
+  currentMillis = millis();
+  if((currentMillis - changedTime1) > DEAD_THRESHOLD) {
+     Serial.println("1 is alive");
+    dead1=false;
+  }
+} else {
+  // track time the button is pressed
   if(buttonState1 == HIGH) {
     count1++;
   } else {
     count1 = 0;
   }
+}
+
+if(dead2) {
+    currentMillis = millis();
+  if((currentMillis - changedTime2) > DEAD_THRESHOLD) {
+    Serial.println("2 is alive");
+    dead2=false;
+  }
+} else {
+  if(buttonState2 == HIGH) {
+    count2++;
+  } else {
+    count2 = 0;
+  }
+}
 
 // if button pressed long enough, toggle selected state
   if(count1 > PUSH_THRESHOLD) {
-    if(selected1 == 0) {
-      selected1 = 1;
-    } else if(selected1 == 1) {
-      selected1 = 0;
+    if(selected1 == false) {
+      selected1 = true;
+    } else if(selected1 == true) {
+      selected1 = false;
     }
+    dead1 = true;
+    changedTime1 = millis();
     count1 = 0;
-    Serial.print("====================================");
+        Serial.println("1====================================");
+  }
+  if(count2 > PUSH_THRESHOLD) {
+    if(selected2 == false) {
+      selected2 = true;
+    } else if(selected2 == true) {
+      selected2 = false;
+    }
+    dead2 = true;
+    changedTime2 = millis();
+    count2 = 0;
+    Serial.println("2====================================");
   }
 
 // if selected, light the LED
@@ -72,16 +121,15 @@ void loop() {
   } else {
      digitalWrite(LED_1_PIN, LOW);
   }
-
-if(count1 > 0) {
-   Serial.print("1: "); Serial.print(count1);Serial.print(", ");Serial.println(selected1);
-}
-
-  if(buttonState2 == HIGH) {
-    digitalWrite(LED_2_PIN, HIGH);
-    count2++;
+  if(selected2) {
+     digitalWrite(LED_2_PIN, HIGH);
   } else {
-    digitalWrite(LED_2_PIN, LOW);
-    count2 = 0;
+     digitalWrite(LED_2_PIN, LOW);
   }
+
+
+//if(count2 > 0) {
+  // Serial.print("2: "); Serial.print(count2);Serial.print(", ");Serial.println(selected2);
+//}
+
 }
