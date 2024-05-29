@@ -7,7 +7,6 @@ The ESP sends a low or a high signal for each channel once per second. Both sign
 This program is meant to be run with the ESP wired as shown below:
 
 
-![Alt text](./Diagram.svg)
 <img src="./Diagram.svg">
 
 
