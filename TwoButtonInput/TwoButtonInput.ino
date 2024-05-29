@@ -45,24 +45,27 @@ const int PUSH_THRESHOLD = 80;
 unsigned long DEAD_THRESHOLD = 500UL;
 
 // if button 1 or 2 is pressed
-int buttonState1 = 0;
-int buttonState2 = 0;
+int buttonState1 = false;
+int buttonState2 = false;
 
-// how many cycles button 1 or 2 has been down
-int count1 = 0;
-int count2 = 0;
+// time of button press, used to count if "pushed"
+unsigned long pressedTime1 = 0UL;
+unsigned long pressedTime2 = 0UL;
 
-// time selection was changed, used to count "dead time"
+int pressed1 = false;
+int pressed2 = false;
+
+// time of selection change, used to count "dead time"
 unsigned long changedTime1 = 0UL;
 unsigned long changedTime2 = 0UL;
 
 // is this button counting "dead time"
-int dead1 = 0;
-int dead2 = 0;
+int dead1 = false;
+int dead2 = false;
 
 // if channel 1 or 2 has been "selected" (by pushing the button for it)
-int selected1 = 0;
-int selected2 = 0;
+int selected1 = false;
+int selected2 = false;
 
 unsigned long currentMillis;
 
@@ -136,46 +139,58 @@ void loop() {
   buttonState1 = digitalRead(BUTTON_1_PIN);
   buttonState2 = digitalRead(BUTTON_2_PIN);
 
-// don't count if button was just pressed
-if(!isButton1Dead()) {
-  // track time the button is pressed
-  if(buttonState1 == HIGH) {
-    count1++;
-  } else {
-    count1 = 0;
-  }
-}
-
-if(!isButton2Dead()){
-  if(buttonState2 == HIGH) {
-    count2++;
-  } else {
-    count2 = 0;
-  }
-}
-
-// if button pressed long enough, toggle selected state
-  if(count1 > PUSH_THRESHOLD) {
-    if(selected1 == false) {
-      selected1 = true;
-    } else if(selected1 == true) {
-      selected1 = false;
+  // don't count if button was just pressed
+  if(!isButton1Dead()) {
+    // track time the button is pressed
+    if(buttonState1 == HIGH) {
+      if(pressed1 == false) {
+        pressedTime1 = millis();
+        pressed1 = true;
+      }
+    } else {
+      pressed1 = false;
     }
-    dead1 = true;
-    changedTime1 = millis();
-    count1 = 0;
   }
-  if(count2 > PUSH_THRESHOLD) {
-    if(selected2 == false) {
-      selected2 = true;
-    } else if(selected2 == true) {
-      selected2 = false;
+  
+  if(!isButton2Dead()){
+    if(buttonState2 == HIGH) {
+      if(pressed2 == false) {
+        pressedTime2 = millis();
+        pressed2 = true;
+      }
+    } else {
+      pressed2 = false;
     }
-    dead2 = true;
-    changedTime2 = millis();
-    count2 = 0;
   }
 
+  // if button pressed long enough, toggle selected state
+  if(pressed1) {
+    currentMillis = millis();
+    if((currentMillis - pressedTime1) > PUSH_THRESHOLD) {
+      if(selected1 == false) {
+        selected1 = true;
+      } else if(selected1 == true) {
+        selected1 = false;
+      }
+      dead1 = true;
+      changedTime1 = millis();
+      pressed1 = false;
+    }
+  }
+    
+    if(pressed2) {
+      currentMillis = millis();
+      if((currentMillis - pressedTime2) > PUSH_THRESHOLD) {
+        if(selected2 == false) {
+          selected2 = true;
+        } else if(selected2 == true) {
+          selected2 = false;
+        }
+        dead2 = true;
+        changedTime2 = millis();
+        pressed2 = false;
+      }
+    }
+  
   lightLedsIfSelected();
-
 }
