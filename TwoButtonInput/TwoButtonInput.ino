@@ -13,42 +13,67 @@
 
 #include "passwords.hpp"
 
-const int button1 = 25;
-const int led1    = 26;
+const  int BUTTON_1_PIN = 25;
+const  int LED_1_PIN    = 26;
 
-const int button2 = 32;
-const int led2    = 33;
+const  int BUTTON_2_PIN = 32;
+const  int LED_2_PIN    = 33;
 
+const  int PUSH_THRESHOLD = 100;
+
+// if button 1 or 2 is pressed
 int buttonState1 = 0;
 int buttonState2 = 0;
+
+// how many cycles button 1 or 2 has been down
+int count1 = 0;
+int count2 = 0;
+
+// if channel 1 or 2 has been "selected" (by pushing the button for it)
+int selected1 = 0;
+int selected2 = 0;
+
 
 void setup() {
   Serial.begin(115200);
 
-  pinMode(button1, INPUT);
-  pinMode(button2, INPUT);
+  pinMode(BUTTON_1_PIN, INPUT);
+  pinMode(BUTTON_2_PIN, INPUT);
 
-  pinMode(led1, OUTPUT);
-  pinMode(led2, OUTPUT);
+  pinMode(LED_1_PIN, OUTPUT);
+  pinMode(LED_2_PIN, OUTPUT);
 }
 
 void loop() {
-  buttonState1 = digitalRead(button1);
-  buttonState2 = digitalRead(button2);
-  
-  Serial.print("1: ");   Serial.println(buttonState1);
- // Serial.print("2: ");  Serial.println(buttonState2);
+  buttonState1 = digitalRead(BUTTON_1_PIN);
+  buttonState2 = digitalRead(BUTTON_2_PIN);
 
-// turn the corresponding LED on when the button is pressed
+// track time the button is pressed
   if(buttonState1 == HIGH) {
-    digitalWrite(led1, HIGH);
+    count1++;
   } else {
-    digitalWrite(led1, LOW);
+    count1 = 0;
   }
 
-  if(buttonState2 == HIGH) {
-    digitalWrite(led2, HIGH);
+// if button pressed long enough, toggle selected state
+  if(count1 > PUSH_THRESHOLD) {
+    selected1 = (selected1++)%2;
+  }
+
+// if selected, light the LED
+  if(selected1) {
+     digitalWrite(LED_1_PIN, HIGH);
   } else {
-    digitalWrite(led2, LOW);
+     digitalWrite(LED_1_PIN, LOW);
+  }
+
+   Serial.print("1: ");   Serial.println(count1);
+
+  if(buttonState2 == HIGH) {
+    digitalWrite(LED_2_PIN, HIGH);
+    count2++;
+  } else {
+    digitalWrite(LED_2_PIN, LOW);
+    count2 = 0;
   }
 }
