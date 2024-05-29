@@ -7,34 +7,7 @@ The ESP sends a low or a high signal for each channel once per second. Both sign
 This program is meant to be run with the ESP wired as shown below:
 
 
-```mermaid
----
-title: Flow Circuit diagram
----
+![Alt text](./Diagram.svg)
+<img src="./Diagram.svg">
 
-graph LR
-	subgraph ESP32
-	VIN
-	GND
-	D25
-	D26
-	D32
-	D33
-	end
-	GND --- Ground
-	B1((Button1))
-	B2((Button2))
-	R1_10K[[R10K]]
-	R1_220[[R220]]
-	R2_10K[[R10K]]
-	R2_220[[R220]]
-	L1((LED1))
-	L2((LED2))
-	VIN --- B1 --- R1_10K --- Ground
-	B1 --- D25
-	D26 --- L1 --- R1_220 --- Ground
 
-	VIN --- B2 --- R2_10K --- Ground
-	B2 --- D32
-	D33 --- L2 --- R2_220 --- Ground
-```
