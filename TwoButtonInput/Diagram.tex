@@ -7,19 +7,20 @@
 \begin{circuitikz}
 	[pin/.style={rectangle, draw, inner sep=0pt, minimum height=0.5cm, minimum width=1cm}]
 
-	\clip(0,-10) rectangle (15,10);
+	%\clip(0,-10) rectangle (15,10);
 	%\draw[step=1cm,gray,ultra thin] (0,-10) grid (20,10);
 	%\draw (0,0) circle [radius=10pt];
 		
 	% Body of the chip
-	\draw(0,-8) rectangle (2.5,8);
+	\node at (1,0) [rectangle, thick, draw, minimum width=3cm, minimum height=16cm]  {};
+	\node at (0.5,7) [font=\bf]{ESP32};
 	% Pins
-	\node (VIN) at (2,7) [pin] {VIN}  ;
-	\node (GND) at (2,6) [pin]{GND} +(1,.5) ;
-	\node (D26) at (2,1) [pin] {D26} +(1,.5) ;
-	\node (D25) at (2,0) [pin] {D25} +(1,.5) ;
-	\node (D33) at (2,-1) [pin] {D33} +(1,.5) ;
-	\node (D32) at (2,-2) [pin] {D32} +(1,.5) ;
+	\node (VIN) at (2,7) [pin] {VIN} ;
+	\node (GND) at (2,6) [pin]{GND} +(1,.5);
+	\node (D26) at (2,1) [pin] {D26} +(1,.5);
+	\node (D25) at (2,0) [pin] {D25} +(1,.5);
+	\node (D33) at (2,-1) [pin] {D33} +(1,.5);
+	\node (D32) at (2,-2) [pin] {D32} +(1,.5);
 			
 	\draw (GND.east) -- ++(10,0) -- ++ (0,-10) node(GROUND)[ground]{};
 	
