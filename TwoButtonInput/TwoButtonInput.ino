@@ -38,13 +38,19 @@ const int LED_1_PIN    = 26;
 const int BUTTON_2_PIN = 32;
 const int LED_2_PIN    = 33;
 
-// Push must be this long to trigger selection change
+// Button has state "pressed"
+// -> if pressed long enough, button has been "pushed"
+// ---> after button is pushed, there is a wait time before it can be pushed again
+// -> if button pushed odd # of times, that channel is "selected"
+// -> if button pushed even # of times, that channel is deselected
+
+// Press must be this long to trigger selection change (ms)
 const int PUSH_THRESHOLD = 80;
 
-// After a selection change, stop listening for this long 
+// After a selection change, stop listening for this long (ms)
 unsigned long WAITING_THRESHOLD = 500UL;
 
-// if button 1 or 2 is pressed
+// if button 1 or 2 is pressed (instantaneous)
 int buttonState1 = false;
 int buttonState2 = false;
 
@@ -52,8 +58,8 @@ int buttonState2 = false;
 unsigned long pressedTime1 = 0UL;
 unsigned long pressedTime2 = 0UL;
 
-int pressed1 = false;
-int pressed2 = false;
+int pushed1 = false;
+int pushed2 = false;
 
 // time of selection change, used to count "waiting time"
 unsigned long changedTime1 = 0UL;
@@ -66,6 +72,24 @@ int waiting2 = false;
 // if channel 1 or 2 has been "selected" (by pushing the button for it)
 int selected1 = false;
 int selected2 = false;
+
+// time a channel was selected
+unsigned long selectedTime1 = 0UL;
+unsigned long selectedTime2 = 0UL;
+
+// time a channel was deselected
+unsigned long deselectedTime1 = 0UL;
+unsigned long deselectedTime2 = 0UL;
+
+// time between sending data to the server (ms)
+unsigned int REPORTING_INTERVAL = 10000;
+
+// time the most recent report was sent to the server
+unsigned long lastReportTime = 0UL;
+
+// time in the last reporting interval that a channel was selected (ms)
+int msSelected1 = 0;
+int msSelected2 = 0;
 
 unsigned long currentMillis;
 
@@ -134,66 +158,118 @@ int isButton2Waiting() {
    return waiting2;
 }
 
-int isButton1Pressed() {
+int isButton1Pushed() {
   if(!isButton1Waiting()) {
     // track time the button is pressed
     if(buttonState1 == HIGH) {
-      if(pressed1 == false) {
+      if(pushed1 == false) {
         pressedTime1 = millis();
-        pressed1 = true;
+        pushed1 = true;
       }
     } else {
-      pressed1 = false;
+      pushed1 = false;
     }
   }
-  return pressed1;
+  return pushed1;
 }
 
-int isButton2Pressed() {
+int isButton2Pushed() {
    if(!isButton2Waiting()){
     if(buttonState2 == HIGH) {
-      if(pressed2 == false) {
+      if(pushed2 == false) {
         pressedTime2 = millis();
-        pressed2 = true;
+        pushed2 = true;
       }
     } else {
-      pressed2 = false;
+      pushed2 = false;
     }
   }
-  return pressed2;
+  return pushed2;
 }
 
+// Ensures that selected1 is true if channel 2 is selected, false otherwise
 void updateSelection1() {
   // if button pressed long enough, toggle selected state
-  if(isButton1Pressed()) {
+  if(isButton1Pushed()) {
     currentMillis = millis();
     if((currentMillis - pressedTime1) > PUSH_THRESHOLD) {
       if(selected1 == false) {
         selected1 = true;
+        selectedTime1 = millis();
       } else if(selected1 == true) {
         selected1 = false;
+        deselectedTime1 = millis();
       }
       waiting1 = true;
       changedTime1 = millis();
-      pressed1 = false;
+      pushed1 = false;
     }
   }
 }
 
+// Ensures that selected2 is true if channel 2 is selected, false otherwise
 void updateSelection2() {
-   if(isButton2Pressed()) {
+   if(isButton2Pushed()) {
     currentMillis = millis();
     if((currentMillis - pressedTime2) > PUSH_THRESHOLD) {
       if(selected2 == false) {
         selected2 = true;
+        selectedTime2 = millis();
       } else if(selected2 == true) {
         selected2 = false;
+        deselectedTime2 = millis();
       }
       waiting2 = true;
       changedTime2 = millis();
-      pressed2 = false;
+      pushed2 = false;
     }
   }
+}
+
+void sendMsSelected1() {
+  if(selected1) {
+      if(selectedTime1 < lastReportTime) {
+        // case 1: selected and has been selected
+        msSelected1 = currentMillis - lastReportTime;
+      } else {
+        // case 2: selected and wasn't before
+        msSelected1 = currentMillis - selectedTime1;
+      }
+    } else {
+      if(deselectedTime1 < lastReportTime) {
+        // case 4: not selected and wasn't before 
+        msSelected1 = 0;
+      } else {
+        // case 3: not selected but was before
+        // it turned off in this interval
+        msSelected1 = deselectedTime1 - lastReportTime;
+      }
+    }
+    noise_feed->save(msSelected1); 
+    Serial.print("Sent to Noise: "); Serial.println(msSelected1);
+}
+
+void sendMsSelected2() {
+  if(selected2) {
+      if(selectedTime2 < lastReportTime) {
+        // case 1: selected and has been selected
+        msSelected2 = currentMillis - lastReportTime;
+      } else {
+        // case 2: selected and wasn't before
+        msSelected2 = currentMillis - selectedTime2;
+      }
+    } else {
+      if(deselectedTime2 < lastReportTime) {
+        // case 4: not selected and wasn't before 
+        msSelected2 = 0;
+      } else {
+        // case 3: not selected but was before
+        // it turned off in this interval
+        msSelected2 = deselectedTime2 - lastReportTime;
+      }
+    }
+    home_feed->save(msSelected2); 
+    Serial.print("Sent to Home: "); Serial.println(msSelected2);
 }
 
 void loop() {
@@ -201,8 +277,20 @@ void loop() {
   buttonState2 = digitalRead(BUTTON_2_PIN);
 
   updateSelection1();
-
   updateSelection2();
- 
+
   lightLedsIfSelected();
+
+  //Serial.print("1: "); Serial.print(selected1); Serial.print(", 2: "); Serial.println(selected2);
+
+  currentMillis = millis();
+
+  if((currentMillis - lastReportTime) > REPORTING_INTERVAL) {
+    Serial.print("current: "); Serial.print(currentMillis); Serial.print(",last: "); Serial.println(lastReportTime);
+    sendMsSelected1();
+    sendMsSelected2();
+      
+    lastReportTime = currentMillis;
+  }
+
 }
